@@ -1,0 +1,100 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Outer frosted glass prism base -->
+    <path android:pathData="M50.5,29.5 Q54,26.5 57.5,29.5 L80.5,69.5 Q82.5,73.5 78.0,74.5 L30.0,74.5 Q25.5,73.5 27.5,69.5 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="30"
+                android:startY="28"
+                android:endX="78"
+                android:endY="75">
+                <item android:offset="0.0" android:color="#CCBCCBD6" />
+                <item android:offset="0.5" android:color="#997E92A4" />
+                <item android:offset="1.0" android:color="#CCE2EDF4" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Left glass bevel facet -->
+    <path android:pathData="M52.5,28.5 L54.0,40.5 L38.5,67.5 L28.0,73.2 Q26.5,71.8 27.5,69.5 L50.5,29.5 Q51.4,28.6 52.5,28.5 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="34"
+                android:startY="45"
+                android:endX="52"
+                android:endY="60">
+                <item android:offset="0.0" android:color="#D9C5DCE4" />
+                <item android:offset="0.55" android:color="#88586B7E" />
+                <item android:offset="1.0" android:color="#B398B0C0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Right glass bevel facet (catching bright silver-cyan specular beam) -->
+    <path android:pathData="M55.5,28.5 Q56.6,28.6 57.5,29.5 L80.5,69.5 Q81.5,71.8 80.0,73.2 L69.5,67.5 L54.0,40.5 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="56"
+                android:startY="32"
+                android:endX="76"
+                android:endY="68">
+                <item android:offset="0.0" android:color="#E6E4F2F8" />
+                <item android:offset="0.45" android:color="#CC9CC2CC" />
+                <item android:offset="1.0" android:color="#B3708394" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Bottom glass bevel facet -->
+    <path android:pathData="M38.5,67.5 L69.5,67.5 L80.0,73.2 Q79.1,74.4 78.0,74.5 L30.0,74.5 Q28.9,74.4 28.0,73.2 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="54"
+                android:startY="67"
+                android:endX="54"
+                android:endY="75">
+                <item android:offset="0.0" android:color="#B37A8B9C" />
+                <item android:offset="1.0" android:color="#E6D2E0EA" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Inner recessed dark-glass triangle with soft cyan refraction glow -->
+    <path android:pathData="M54.0,40.5 L69.5,67.5 L38.5,67.5 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="44"
+                android:startY="46"
+                android:endX="66"
+                android:endY="66">
+                <item android:offset="0.0" android:color="#E61A2636" />
+                <item android:offset="0.52" android:color="#CC4E6C7A" />
+                <item android:offset="1.0" android:color="#E62A394A" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Inner glass rim highlight -->
+    <path
+        android:pathData="M54.0,40.5 L69.5,67.5 L38.5,67.5 Z"
+        android:strokeWidth="0.9"
+        android:strokeColor="#CCFFFFFF"
+        android:fillColor="#00000000" />
+
+    <!-- Outer specular glass rim -->
+    <path
+        android:pathData="M50.5,29.5 Q54,26.5 57.5,29.5 L80.5,69.5 Q82.5,73.5 78.0,74.5 L30.0,74.5 Q25.5,73.5 27.5,69.5 Z"
+        android:strokeWidth="1.2"
+        android:strokeColor="#E6FFFFFF"
+        android:fillColor="#00000000" />
+</vector>

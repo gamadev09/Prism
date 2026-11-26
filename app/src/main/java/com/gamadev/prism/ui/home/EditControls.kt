@@ -1,0 +1,270 @@
+package com.gamadev.prism.ui.home
+
+import androidx.compose.animation.core.Animatable
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.dp
+import com.gamadev.prism.R
+import com.gamadev.prism.design.ContinuousRoundedShape
+import com.gamadev.prism.design.DesignTokens
+import com.gamadev.prism.glass.LiquidGlass
+import com.gamadev.prism.glass.glassCapsule
+import com.gamadev.prism.glass.glassRect
+import com.gamadev.prism.motion.Motion
+import com.gamadev.prism.ui.Inter
+import kotlin.math.roundToInt
+
+/** Two glass capsules at the top (T-EDIT-BTN): left brush ("Customise"), right checkmark ("Done"). */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+fun EditButtons(geo: HomeGeometry, wallpaper: ImageBitmap, density: Float, showLeft: Boolean = true, leftPlus: Boolean = false,
+                /** Duo: pop-up 0…1 (from ≈ 60 % size, with overshoot) instead of growing from 0. */
+                popIn: (() -> Float)? = null, scale: () -> Float) {
+    // The buttons sit where the status bar otherwise is: fade in only once it's really gone
+    // (follows the system animation; read in the draw phase → no recomposition per frame)
+    val statusBar = WindowInsets.statusBars
+    val statusBarFull = WindowInsets.statusBarsIgnoringVisibility
+    for (left in listOf(true, false)) {
+        if (left && !showLeft) continue
+        val r = geo.editButtonRect(left)
+        LiquidGlass(
+            shape = glassCapsule(),
+            thickness = DesignTokens.editButtonHeight.value / DesignTokens.dockHeight.value,
+            // Frosted glass like IMG_3124: strongly blurred and light, so the dark glyph stays legible
+            // Duo [video 4, 1 s]: almost clear glass (the wallpaper colour shines through), light rim, white glyphs
+            blur = if (geo.duo) DUO_BTN_BLUR.dp else FROST_BLUR.dp,
+            whiteTint = if (geo.duo) DUO_BTN_WHITE else if (DesignTokens.wallpaperIsDark) FROST_WHITE_DARK else FROST_WHITE,
+            blackTint = 0f,
+            rimAlpha = if (geo.duo) DUO_BTN_RIM else null,
+            // ✓ / brush lie on the wallpaper; in edit mode the jiggling icons change the home screen every frame, which made
+            // every live-backdrop glass re-record everything each frame → fast wallpaper glass
+            onWallpaper = true,
+            modifier = Modifier
+                .offset { IntOffset(r.left.roundToInt(), r.top.roundToInt()) }
+                .size(Dp(r.width / density), Dp(r.height / density))
+                .graphicsLayer {
+                    val p = popIn?.invoke()
+                    val full = statusBarFull.getTop(this).coerceAtLeast(1)
+                    val gone = 1f - statusBar.getTop(this).toFloat() / full
+                    if (p != null) {
+                        val sc = POP_FROM + (1f - POP_FROM) * p; scaleX = sc; scaleY = sc
+                        alpha = (p * POP_ALPHA_RATE).coerceIn(0f, 1f) * gone.coerceIn(0f, 1f)
+                    } else {
+                        val s = scale(); scaleX = s; scaleY = s
+                        alpha = s.coerceIn(0f, 1f) * gone.coerceIn(0f, 1f)
+                    }
+                },
+        ) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                val gs = if (geo.duo) DUO_GLYPH.dp else DesignTokens.editGlyphSize.dp
+                val gc = Color.White
+                val sw = if (geo.duo) DUO_GLYPH_STROKE else 0.14f
+                if (left) { if (leftPlus) PlusGlyph(gs, gc) else BrushGlyph(gs, gc, sw) } else CheckGlyph(gs, gc, sw)
+            }
+        }
+    }
+}
+
+/** Checkmark as a vector (no SF Symbol); proportions after IMG_3124 [ESTIMATED]. */
+@Composable
+private fun CheckGlyph(size: Dp, color: Color = DesignTokens.glyphColor, stroke: Float = 0.14f) = Canvas(Modifier.size(size)) {
+    val s = this.size.width
+    val path = Path().apply {
+        moveTo(0.08f * s, 0.55f * s)
+        lineTo(0.38f * s, 0.88f * s)
+        lineTo(0.92f * s, 0.12f * s)
+    }
+    drawPath(path, color, style = Stroke(width = stroke * s, cap = StrokeCap.Round, join = StrokeJoin.Round))
+}
+
+/** Plus (Edit Stack: add widget). */
+@Composable
+private fun PlusGlyph(size: Dp, color: Color = DesignTokens.glyphColor) = Canvas(Modifier.size(size)) {
+    val s = this.size.width; val w = 0.12f * s
+    drawLine(color, Offset(s / 2, 0.08f * s), Offset(s / 2, 0.92f * s), w, StrokeCap.Round)
+    drawLine(color, Offset(0.08f * s, s / 2), Offset(0.92f * s, s / 2), w, StrokeCap.Round)
+}
+
+/** Brush as a vector (no SF Symbol) [ESTIMATED]. */
+@Composable
+internal fun BrushGlyph(size: Dp, c: Color = DesignTokens.glyphColor, stroke: Float = 0.14f) = Canvas(Modifier.size(size)) {
+    val s = this.size.width
+    drawLine(c, Offset(0.85f * s, 0.1f * s), Offset(0.45f * s, 0.55f * s), stroke * s, StrokeCap.Round)
+    val tip = Path().apply {
+        moveTo(0.42f * s, 0.5f * s)
+        cubicTo(0.2f * s, 0.5f * s, 0.25f * s, 0.8f * s, 0.08f * s, 0.92f * s)
+        cubicTo(0.35f * s, 0.95f * s, 0.55f * s, 0.85f * s, 0.52f * s, 0.6f * s)
+        close()
+    }
+    drawPath(tip, c)
+}
+
+/**
+ * iOS dialog "Remove "App"?" (T-ALERT, M-ALERT) with stacked capsule buttons in iOS 26/27 style.
+ * "Delete App" opens the system uninstall dialog (Android requires the system's confirmation).
+ */
+@Composable
+fun RemoveAppAlert(
+    appName: String,
+    canDelete: Boolean,
+    wallpaper: ImageBitmap,
+    onDelete: () -> Unit,
+    onRemoveFromHome: () -> Unit,
+    onCancel: () -> Unit,
+) {
+    val appear = remember { Animatable(0f) }
+    LaunchedEffect(Unit) { appear.animateTo(1f, Motion.alert.spec()) }
+    val noRipple = remember { MutableInteractionSource() }
+    val dark = com.gamadev.prism.design.IconAppearance.systemDark
+    val titleColor = if (dark) Color.White else DesignTokens.alertText
+    val bodyColor = if (dark) Color(0xB3FFFFFF) else DesignTokens.alertSecondaryText
+
+    Box(
+        Modifier
+            .fillMaxSize()
+            .graphicsLayer { alpha = appear.value.coerceIn(0f, 1f) }
+            .background(Color.Black.copy(alpha = DesignTokens.alertScrim.value))
+            .clickable(interactionSource = noRipple, indication = null) { onCancel() },
+        contentAlignment = Alignment.Center,
+    ) {
+        LiquidGlass(
+            shape = glassRect(DesignTokens.alertCorner.dp),
+            thickness = DesignTokens.glassThicknessLarge.value,
+            blur = DesignTokens.alertBlur.dp,
+            whiteTint = if (dark) 0f else DesignTokens.alertTint.value,
+            blackTint = if (dark) 0.62f else 0f,
+            modifier = Modifier
+                .width(DesignTokens.alertWidth.dp)
+                .graphicsLayer {
+                    // iOS alerts zoom in slightly from larger [ESTIMATED]
+                    val s = 1f + (1f - appear.value) * ALERT_START_SCALE_DELTA
+                    scaleX = s; scaleY = s
+                }
+                .clickable(interactionSource = noRipple, indication = null) { },
+        ) {
+            Column(
+                Modifier.padding(DesignTokens.alertPadding.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(DesignTokens.alertButtonGap.dp),
+            ) {
+                BasicText(
+                    stringResource(R.string.remove_title, appName),
+                    style = TextStyle(fontFamily = Inter, fontWeight = FontWeight.SemiBold, fontSize = DesignTokens.alertTitleSize.value.sp,
+                        color = titleColor, textAlign = TextAlign.Center),
+                )
+                BasicText(
+                    stringResource(R.string.remove_message),
+                    style = TextStyle(fontFamily = Inter, fontSize = DesignTokens.alertBodySize.value.sp,
+                        color = bodyColor, textAlign = TextAlign.Center),
+                )
+                Spacer(Modifier.height(DesignTokens.alertButtonGap.dp))
+                if (canDelete) AlertButton(stringResource(R.string.delete_app), DesignTokens.destructive, false, onDelete)
+                AlertButton(stringResource(R.string.remove_from_home), titleColor, false, onRemoveFromHome)
+                AlertButton(stringResource(R.string.cancel), titleColor, true, onCancel)
+            }
+        }
+    }
+}
+
+private const val ALERT_START_SCALE_DELTA = 0.1f // [ESTIMATED]
+
+/** iOS confirmation with two capsules side by side (Cancel | Remove, red) — recording 10-08 10:21, frame 2010. */
+@Composable
+fun TwoButtonAlert(title: String, message: String, confirm: String, cancel: String, onConfirm: () -> Unit, onCancel: () -> Unit) {
+    val appear = remember { Animatable(0f) }
+    LaunchedEffect(Unit) { appear.animateTo(1f, Motion.alert.spec()) }
+    val noRipple = remember { MutableInteractionSource() }
+    val dark = com.gamadev.prism.design.IconAppearance.systemDark
+    val titleColor = if (dark) Color.White else DesignTokens.alertText
+    val bodyColor = if (dark) Color(0xB3FFFFFF) else DesignTokens.alertSecondaryText
+    Box(
+        Modifier.fillMaxSize().graphicsLayer { alpha = appear.value.coerceIn(0f, 1f) }
+            .background(Color.Black.copy(alpha = DesignTokens.alertScrim.value))
+            .clickable(interactionSource = noRipple, indication = null) { onCancel() },
+        contentAlignment = Alignment.Center,
+    ) {
+        LiquidGlass(
+            shape = glassRect(DesignTokens.alertCorner.dp), thickness = DesignTokens.glassThicknessLarge.value,
+            blur = DesignTokens.alertBlur.dp, whiteTint = if (dark) 0f else DesignTokens.alertTint.value, blackTint = if (dark) 0.62f else 0f,
+            modifier = Modifier.width(DesignTokens.alertWidth.dp)
+                .graphicsLayer { val sc = 1f + (1f - appear.value) * ALERT_START_SCALE_DELTA; scaleX = sc; scaleY = sc }
+                .clickable(interactionSource = noRipple, indication = null) { },
+        ) {
+            Column(Modifier.padding(DesignTokens.alertPadding.dp), verticalArrangement = Arrangement.spacedBy(DesignTokens.alertButtonGap.dp)) {
+                BasicText(title, style = TextStyle(fontFamily = Inter, fontWeight = FontWeight.SemiBold, fontSize = DesignTokens.alertTitleSize.value.sp, color = titleColor))
+                BasicText(message, style = TextStyle(fontFamily = Inter, fontSize = DesignTokens.alertBodySize.value.sp, color = bodyColor))
+                Spacer(Modifier.height(DesignTokens.alertButtonGap.dp))
+                androidx.compose.foundation.layout.Row(horizontalArrangement = Arrangement.spacedBy(DesignTokens.alertButtonGap.dp)) {
+                    Box(Modifier.weight(1f)) { AlertButton(cancel, titleColor, false, onCancel) }
+                    Box(Modifier.weight(1f)) { AlertButton(confirm, DesignTokens.destructive, false, onConfirm) }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AlertButton(text: String, color: Color, bold: Boolean, onClick: () -> Unit) {
+    val fill = if (com.gamadev.prism.design.IconAppearance.systemDark) Color(0x26FFFFFF) else DesignTokens.alertButtonFill
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .height(DesignTokens.alertButtonHeight.dp)
+            .background(fill, RoundedCornerShape(50))
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        BasicText(
+            text,
+            style = TextStyle(fontFamily = Inter, fontSize = DesignTokens.alertTitleSize.value.sp, color = color,
+                fontWeight = if (bold) FontWeight.SemiBold else FontWeight.Normal),
+        )
+    }
+}
+
+// Duo edit buttons [MEASURED video 4, 1 s]: checkmark ≈ 17 × 13 pt, stroke ≈ 1.5 pt, white
+private const val POP_FROM = 0.6f // [MEASURED] first visible frame ≈ 60 % size, pale
+private const val POP_ALPHA_RATE = 2.5f
+internal const val DUO_GLYPH = 18f
+internal const val DUO_GLYPH_STROKE = 0.085f
+internal const val DUO_BTN_BLUR = 6f
+internal const val DUO_BTN_WHITE = 0.05f
+internal const val DUO_BTN_RIM = 0.65f
