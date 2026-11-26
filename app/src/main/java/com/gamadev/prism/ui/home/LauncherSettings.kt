@@ -18,6 +18,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -343,6 +344,55 @@ private fun DetailBody(c: Category, model: HomeModel, tick: Int, inlineTitle: Bo
                     val label = remember(chosen) { chosen?.let { com.gamadev.prism.data.IconPacks.available(context).firstOrNull { p -> p.packageName == it }?.label } }
                     LinkRow(stringResource(R.string.settings_sec_iconpack), label ?: stringResource(R.string.settings_iconpack_system)) { openSub(SubPage.IconPacks) }
                 }
+                // Live 4×2 Icon Shape visual preview picker
+                Section(stringResource(R.string.settings_icon_shape)) {
+                    val shapes = com.gamadev.prism.design.IconShape.entries
+                    val curShape = com.gamadev.prism.design.IconAppearance.iconShape
+                    Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        shapes.chunked(4).forEach { rowShapes ->
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                rowShapes.forEach { sh ->
+                                    val selected = sh == curShape
+                                    val previewShape = com.gamadev.prism.design.IconAppearance.shape(11.dp, sh)
+                                    Column(
+                                        Modifier
+                                            .weight(1f)
+                                            .clip(RoundedCornerShape(14.dp))
+                                            .background(if (selected) ACCENT.copy(alpha = 0.14f) else Color.Transparent)
+                                            .clickable {
+                                                com.gamadev.prism.design.IconAppearance.iconShape = sh
+                                                com.gamadev.prism.design.IconAppearance.save(context)
+                                            }
+                                            .padding(vertical = 8.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                    ) {
+                                        Box(
+                                            Modifier
+                                                .size(40.dp)
+                                                .clip(previewShape)
+                                                .background(
+                                                    androidx.compose.ui.graphics.Brush.linearGradient(
+                                                        listOf(Color(0xFF4A90E2), Color(0xFF5E5CE6))
+                                                    )
+                                                )
+                                        )
+                                        Spacer(Modifier.height(6.dp))
+                                        BasicText(
+                                            sh.name,
+                                            maxLines = 1,
+                                            style = TextStyle(
+                                                fontFamily = Inter,
+                                                fontSize = 11.sp,
+                                                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                                                color = if (selected) ACCENT else GREY,
+                                            ),
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 // like iOS: Settings › Appearance › Liquid Glass (own page with preview + clear ↔ tinted slider + Fast Glass)
                 Section(null) {
                     val t = com.gamadev.prism.glass.GlassClarity.amount
@@ -353,10 +403,6 @@ private fun DetailBody(c: Category, model: HomeModel, tick: Int, inlineTitle: Bo
                         t > 0.75f -> R.string.settings_glass_tinted
                         else -> R.string.settings_glass_between
                     })) { openSub(SubPage.Glass) }
-                }
-                Section(stringResource(R.string.settings_sec_statusbar),
-                    footer = stringResource(if (FoldableStyle.duoStyle) R.string.settings_statusbar_footer_duo else R.string.settings_statusbar_footer)) {
-                    ToggleRow(stringResource(R.string.settings_statusbar), OwnStatusBar.enabled) { OwnStatusBar.set(context, it) }
                 }
             }
             Category.HomeScreen -> {

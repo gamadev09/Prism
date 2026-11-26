@@ -262,7 +262,7 @@ fun IconCell(
     iconContent: @Composable () -> Unit,
 ) {
     val iconSize = DesignTokens.iconSize.dp
-    val shape = ContinuousRoundedShape(DesignTokens.iconCorner.dp)
+    val shape = com.gamadev.prism.design.IconAppearance.shape(DesignTokens.iconCorner.dp)
     val phases = remember(phaseKey) { jigglePhases(phaseKey) }
     val resize = iconSizeProgress()
     val animation = LocalHomeIconResize.current

@@ -4,7 +4,8 @@
 
 # Prism
 
-**A fluid, 120 fps Liquid Glass launcher for Android.**
+**A fluid, 120 fps Liquid Glass launcher for Android 13+.**  
+*Precision spring physics · Real-time AGSL glass · 8 custom icon shapes · True biometric App Lock*
 
 [![Android](https://img.shields.io/badge/Android-13%2B%20(API%2033)-3DDC84?logo=android&logoColor=white)](https://developer.android.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-Jetpack%20Compose-7F52FF?logo=kotlin&logoColor=white)](https://kotlinlang.org)
@@ -15,28 +16,43 @@
 
 ---
 
-## Screenshots
+## Showcase
 
 <div align="center">
 
-| Home Screen | App Library | Search |
-| :---: | :---: | :---: |
-| <img src="docs/screenshots/home.png" width="240" alt="Home Screen" /> | <img src="docs/screenshots/library.png" width="240" alt="App Library" /> | <img src="docs/screenshots/search.png" width="240" alt="Search" /> |
+| Home Screen (Squircle) | App Library | Blurred A–Z Search | Universal Search |
+| :---: | :---: | :---: | :---: |
+| <img src="docs/screenshots/home_squircle.png" width="195" alt="Home Screen" /> | <img src="docs/screenshots/app_library.png" width="195" alt="App Library" /> | <img src="docs/screenshots/library_search.png" width="195" alt="App Library Search" /> | <img src="docs/screenshots/search.png" width="195" alt="Universal Search" /> |
 
 </div>
 
 ---
 
+## Customise Every Detail
+
+### Icon Styles & Sizes
+| Mode | Description |
+|---|---|
+| **Default** | Original app icons with crisp squircle or custom shape masking |
+| **Dark** | Rich dark-gradient icon plates for OLED & night themes |
+| **Clear (Light & Dark)** | Shaded glass-engraved glyphs over live Liquid Glass |
+| **Tinted (Light & Dark)** | Duotone tinted icons & matching tinted closed folders (Device, Wallpaper, or Custom hue) |
+| **Small / Large Icons** | Toggle compact labelled icons or clean, label-free Large icons |
+
+### 8 Built-In Icon Shapes *(with Live 4×2 Preview in Settings)*
+**Squircle** · **Pixel** *(8-bit stepped corners)* · **Circle** · **Rounded** · **Square** · **Teardrop** · **Octagon** · **Hexagon**  
+All 8 shapes preserve full **Liquid Glass**, **Clear**, **Tinted**, and **Dark** styling across your Home Screen, Dock, Folders, and App Library.
+
+---
+
 ## Highlights
 
-- **120 fps Spring Physics** — Vsync-driven, velocity-preserving springs across paging, folders, search pill morphing, edit-mode reflow, and unlock reveals. Explicitly locks to the display's highest native refresh rate (e.g., 120 Hz).
+- **Adaptive & 120 fps Spring Physics** — Vsync-driven, velocity-preserving springs across paging, folders, search pill morphing, app open/return depth, edit-mode reflow, and unlock reveals. Supports **Auto** Adaptive Refresh Rate (60/90/120 Hz) or locked **120 Hz**.
 - **Liquid Glass & Fast Glass (120 fps)** — Real-time AGSL glass refraction with Clear ↔ Tinted clarity control, plus a dedicated **Fast Glass (120 fps)** mode under *Settings › Appearance › Liquid Glass* for ultra-low GPU frame times.
 - **Native Rust Blur** — Fast multi-pass pixel blur compiled to `arm64-v8a` via Rust JNI (`libliquidy_native.so`).
-- **True App Lock for Hidden Apps** — Hide apps in the biometric-protected Hidden folder *and* automatically lock them if opened from outside the launcher (Recents, notifications, Settings, Play Store) with a theme-aware lock screen, animated padlock unlock, zero-flash Go Home, and instant re-lock on screen off.
-- **App Library & Instant Search** — Categorized glass tiles, pull-down A–Z search with a blurred top header, and one-tap **Add to Home Screen** from the context menu.
-- **Folders & Edit Mode** — Smooth squircle folder open/close morphs with live anchor tracking, folder paging, renaming, **Remove Folder** confirmation, jiggle/drag/reflow, and dark-mode-aware frosted dialogs.
-- **Icon Styles & Customisation** — **Default**, **Dark**, **Clear** (shaded glass-engraved glyphs), and **Tinted** (Light & Dark with matching tinted closed folders), plus icon pack support and a built-in wallpaper editor.
-- **Widgets & Today View** — Built-in glass widgets (Clock, Calendar, Batteries, Weather, Photos, Reminders), widget stacks, and Android `AppWidgetHost` support.
+- **True App Lock for Hidden Apps** — Hide apps in the biometric-protected Hidden folder *and* automatically lock them if opened outside Prism (Recents, notifications, Settings, Play Store) with a theme-aware lock screen, animated padlock unlock, zero-flash Go Home, Recents-bypass protection, and instant re-lock on screen off.
+- **App Library & Folders** — Categorized glass tiles, pull-down A–Z search with a blurred top header, one-tap **Add to Home Screen**, squircle-preserving folder open/close morphs, and **Remove Folder** confirmation dialogs.
+- **Widgets & Today View** — Built-in glass widgets (Clock, Calendar, Batteries, Weather, Photos, Reminders), widget stacks, smooth multi-cell grid reflow, and Android `AppWidgetHost` support.
 - **Compact Release Build** — R8-minified and resource-shrunk release APK (~4.2 MB).
 
 ---
@@ -53,7 +69,7 @@
 
 ---
 
-## Building
+## Building & Installing
 
 ### Requirements
 - Android Studio / JDK 17
@@ -71,10 +87,9 @@ adb shell cmd package compile -m speed -f com.gamadev.prism
 
 ## Credits
 
-Created and maintained by **gamadev09**.
+Created and maintained by **gamadev09**.  
+Originally based on [Liquidy](https://github.com/janhurn9400/liquidy) (GPL-3.0).
 
 ## License
 
 This project is licensed under the **GNU General Public License v3.0** — see [LICENSE](LICENSE) for details.
-
-<sub>Forked from Liquidy (GPL-3.0).</sub>

@@ -34,12 +34,8 @@ internal object DisplayRate {
             it.physicalWidth == current.physicalWidth && it.physicalHeight == current.physicalHeight
         }
         available = modes.map { it.refreshRate.roundToInt() }.distinct().sorted()
-        val targetMode = if (selected <= 0) {
-            // Default: request the highest native refresh rate (e.g. 120 Hz) so all launcher animations run at full display rate.
-            modes.maxByOrNull { it.refreshRate }
-        } else {
-            modes.firstOrNull { abs(it.refreshRate - selected) < 0.6f }
-        }
+        // Auto (selected <= 0) lets Android's Adaptive Refresh Rate scale dynamically (60/90/120 Hz).
+        val targetMode = if (selected <= 0) null else modes.firstOrNull { abs(it.refreshRate - selected) < 0.6f }
         val rate = targetMode?.refreshRate ?: 0f
         val modeId = targetMode?.modeId ?: 0
         val attributes = activity.window.attributes

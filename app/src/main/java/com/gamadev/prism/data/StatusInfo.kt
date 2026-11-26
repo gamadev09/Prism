@@ -20,17 +20,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
-/** Setting: hide the Android status bar in the launcher and draw our own (iOS or Duo). Asked in the welcome. */
+/** Custom status bar removed — Prism always uses Android's native system status bar. */
 object OwnStatusBar {
-    private const val PREFS = "statusbar"
-    var enabled by mutableStateOf(false)
-        private set
-
-    fun load(c: Context) { enabled = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean("own", false) }
-    fun set(c: Context, on: Boolean) {
-        enabled = on
-        c.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean("own", on).apply()
-    }
+    const val enabled: Boolean = false
+    fun load(c: Context) {}
+    fun set(c: Context, on: Boolean) {}
 }
 
 /** Status bar values from real Android sources. [wifi]/[cell]: −1 = none, otherwise 0…3 or 0…4. */
