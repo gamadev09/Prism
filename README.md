@@ -12,9 +12,13 @@
 [![Rust](https://img.shields.io/badge/Native-Rust%20JNI-000000?logo=rust&logoColor=white)](https://www.rust-lang.org)
 [![License](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 
+[English](#english) · [Español](#español)
+
 </div>
 
 ---
+
+<a id="english"></a>
 
 ## Showcase
 
@@ -94,3 +98,81 @@ Originally based on [Liquidy](https://github.com/janhurn9400/liquidy) (GPL-3.0).
 ## License
 
 This project is licensed under the **GNU General Public License v3.0** — see [LICENSE](LICENSE) for details.
+
+---
+
+<a id="español"></a>
+
+# Prism (Español)
+
+**Un lanzador fluido Liquid Glass a 120 fps para Android 13+.**  
+*Física de resortes precisa · Cristal AGSL en tiempo real · 8 formas de iconos · Bloqueo biométrico real de apps*
+
+---
+
+## Personaliza cada detalle
+
+### Estilos y tamaños de iconos
+| Modo | Descripción |
+|---|---|
+| **Predeterminado** | Iconos originales con máscara squircle nítida o forma personalizada |
+| **Oscuro** | Placas oscuras con degradado para pantallas OLED y temas nocturnos |
+| **Transparente (Claro y Oscuro)** | Glifos grabados en cristal sobre Liquid Glass en tiempo real |
+| **Teñido (Claro y Oscuro)** | Iconos duotono teñidos y carpetas cerradas a juego (Dispositivo, Fondo o tono personalizado) |
+| **Iconos pequeños / grandes** | Alterna entre iconos compactos con etiqueta o iconos grandes sin texto |
+
+### 8 formas de iconos integradas *(con vista previa 4×2 en Ajustes)*
+**Squircle** · **Pixel** *(esquinas escalonadas de 8 bits)* · **Circle** · **Rounded** · **Square** · **Teardrop** · **Octagon** · **Hexagon**  
+Las 8 formas mantienen el estilo completo de **Liquid Glass**, **Transparente**, **Teñido** y **Oscuro** en la pantalla de inicio, el Dock, las carpetas y la Biblioteca de apps.
+
+---
+
+## Aspectos destacados
+
+- **Física de resortes adaptable y a 120 fps** — Resortes sincronizados con vsync que conservan la velocidad al cambiar de página, abrir carpetas, transformar la barra de búsqueda, abrir/cerrar apps, reorganizar en modo edición y desbloquear. Compatible con tasa adaptable **Automática** (60/90/120 Hz) o **120 Hz** fijos.
+- **Liquid Glass y Cristal rápido (120 fps)** — Refracción de cristal AGSL en tiempo real con control Transparente ↔ Teñido, además de un modo **Cristal rápido (120 fps)** en *Ajustes › Apariencia › Liquid Glass* para tiempos de fotograma mínimos en GPU.
+- **Desenfoque nativo en Rust** — Desenfoque rápido multipaso compilado a `arm64-v8a` mediante Rust JNI (`libliquidy_native.so`).
+- **Bloqueo real para apps ocultas** — Oculta apps en la carpeta Ocultas protegida por biometría *y* bloquéalas automáticamente si se abren fuera de Prism (Recientes, notificaciones, Ajustes, Play Store) con pantalla de bloqueo adaptable al tema, animación de candado, regreso al inicio sin parpadeos y rebloqueo instantáneo al apagar la pantalla.
+- **Biblioteca de apps y carpetas** — Tarjetas de cristal por categorías, búsqueda A–Z deslizando hacia abajo con cabecera desenfocada, **Añadir a la pantalla de inicio** con un toque, animaciones de carpeta y confirmación para **Eliminar carpeta**.
+- **Widgets y vista Hoy** — Widgets de cristal integrados (Reloj, Calendario, Baterías, Tiempo, Fotos, Recordatorios), grupos de widgets, reordenación fluida y soporte para `AppWidgetHost` de Android.
+- **Idioma en Español e Inglés** — Soporte completo en español (`es`) e inglés (`en`) con detección automática del idioma del sistema y selector integrado en *Ajustes › General › Idioma* (usando `LocaleManager` de Android 13+).
+- **Compilación Release compacta** — APK minificado con R8 y recursos reducidos (~4.2 MB).
+
+---
+
+## Arquitectura
+
+| Capa | Tecnología |
+|---|---|
+| Interfaz y gestos | Kotlin, Jetpack Compose, gestión centralizada de gestos (`HomeScreen.kt`) |
+| Movimiento y tokens | Física de resortes centralizada (`Motion.kt`) y tokens de diseño (`DesignTokens.kt`) |
+| Cristal y shaders | AGSL `RuntimeShader` (`WallpaperGlass.kt`) y Kyant Backdrop |
+| Ruta nativa rápida | Rust JNI (`rust/liquidy_native`) |
+| Bloqueo de apps | `UsageStatsManager` + `TYPE_APPLICATION_OVERLAY` + `BiometricPrompt` |
+
+---
+
+## Compilación e instalación
+
+### Requisitos
+- Android Studio / JDK 17
+- Android SDK (minSdk 33, targetSdk 36)
+- *(Opcional)* Rust + Android NDK 27 (`aarch64-linux-android`) para recompilar `libliquidy_native.so`
+
+### APK Release
+```bash
+./gradlew :app:assembleRelease
+adb install -r app/build/outputs/apk/release/app-release.apk
+adb shell cmd package compile -m speed -f com.gamadev.prism
+```
+
+---
+
+## Créditos
+
+Creado y mantenido por **gamadev09**.  
+Basado originalmente en [Liquidy](https://github.com/janhurn9400/liquidy) (GPL-3.0).
+
+## Licencia
+
+Este proyecto está bajo la licencia **GNU General Public License v3.0** — consulta [LICENSE](LICENSE) para más detalles.
