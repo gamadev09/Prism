@@ -15,6 +15,18 @@
 
 ---
 
+## Screenshots
+
+<div align="center">
+
+| Home Screen | App Library | Search |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/home.png" width="240" alt="Home Screen" /> | <img src="docs/screenshots/library.png" width="240" alt="App Library" /> | <img src="docs/screenshots/search.png" width="240" alt="Search" /> |
+
+</div>
+
+---
+
 ## Highlights
 
 - **120 fps Spring Physics** — Vsync-driven, velocity-preserving springs across paging, folders, search pill morphing, edit-mode reflow, and unlock reveals. Explicitly locks to the display's highest native refresh rate (e.g., 120 Hz).
