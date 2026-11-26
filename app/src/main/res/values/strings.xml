@@ -354,4 +354,8 @@
     <string name="layout_backup_restore_failed">Could not restore this backup.</string>
     <string name="layout_backup_working">Working…</string>
     <string name="layout_backup_widget_setup">Widget needs setup. Remove this widget and add it again from Add Widgets.</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_lang_english">English</string>
+    <string name="settings_lang_spanish">Español</string>
+    <string name="settings_lang_footer">System automatically detects whether your phone is in Spanish or English.</string>
 </resources>

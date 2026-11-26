@@ -325,6 +325,7 @@ private fun DetailBody(c: Category, model: HomeModel, tick: Int, inlineTitle: Bo
                 Section(stringResource(R.string.settings_sec_feedback), footer = stringResource(R.string.settings_haptics_footer)) {
                     ToggleRow(stringResource(R.string.welcome_haptics), Haptics.enabled) { Haptics.set(context, it) }
                 }
+                LanguageGroup(tick)
                 RefreshRateGroup()
             }
             Category.Appearance -> {
@@ -624,6 +625,41 @@ private fun Group(content: @Composable () -> Unit) {
 
 @Composable
 private fun Divider(start: Float = 20f) = Box(Modifier.padding(start = start.dp, end = 20.dp).fillMaxWidth().height(0.5.dp).background(SEPARATOR))
+
+@Composable
+private fun LanguageGroup(tick: Int) {
+    val context = LocalContext.current
+    val current = remember(tick) { com.gamadev.prism.data.AppLanguage.current(context) }
+    Section(stringResource(R.string.settings_language), footer = stringResource(R.string.settings_lang_footer)) {
+        Column(Modifier.selectableGroup()) {
+            com.gamadev.prism.data.AppLanguage.entries.forEachIndexed { index, option ->
+                if (index != 0) Divider()
+                val label = stringResource(when (option) {
+                    com.gamadev.prism.data.AppLanguage.System -> R.string.settings_ui_system
+                    com.gamadev.prism.data.AppLanguage.English -> R.string.settings_lang_english
+                    com.gamadev.prism.data.AppLanguage.Spanish -> R.string.settings_lang_spanish
+                })
+                val selected = current == option
+                Row(
+                    Modifier.fillMaxWidth().heightIn(min = ROW_H.dp)
+                        .selectable(selected = selected, role = Role.RadioButton) {
+                            com.gamadev.prism.data.AppLanguage.select(context, option)
+                        }
+                        .padding(horizontal = 20.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    BasicText(label, Modifier.weight(1f), style = LABEL)
+                    if (selected) Canvas(Modifier.size(16.dp)) {
+                        val stroke = 2.dp.toPx()
+                        val middle = Offset(size.width * 0.38f, size.height * 0.73f)
+                        drawLine(ACCENT, Offset(size.width * 0.10f, size.height * 0.47f), middle, stroke, StrokeCap.Round)
+                        drawLine(ACCENT, middle, Offset(size.width * 0.90f, size.height * 0.22f), stroke, StrokeCap.Round)
+                    }
+                }
+            }
+        }
+    }
+}
 
 @Composable
 private fun RefreshRateGroup() {

@@ -53,6 +53,7 @@ All 8 shapes preserve full **Liquid Glass**, **Clear**, **Tinted**, and **Dark**
 - **True App Lock for Hidden Apps** — Hide apps in the biometric-protected Hidden folder *and* automatically lock them if opened outside Prism (Recents, notifications, Settings, Play Store) with a theme-aware lock screen, animated padlock unlock, zero-flash Go Home, Recents-bypass protection, and instant re-lock on screen off.
 - **App Library & Folders** — Categorized glass tiles, pull-down A–Z search with a blurred top header, one-tap **Add to Home Screen**, squircle-preserving folder open/close morphs, and **Remove Folder** confirmation dialogs.
 - **Widgets & Today View** — Built-in glass widgets (Clock, Calendar, Batteries, Weather, Photos, Reminders), widget stacks, smooth multi-cell grid reflow, and Android `AppWidgetHost` support.
+- **English & Spanish Localization** — Full Spanish (`es`) and English (`en`) support with automatic system language detection and an in-app language switcher under *Settings › General › Language* (powered by Android 13+ `LocaleManager`).
 - **Compact Release Build** — R8-minified and resource-shrunk release APK (~4.2 MB).
 
 ---
